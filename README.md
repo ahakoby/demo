@@ -1,4 +1,4 @@
-# English to russian translater by Dictionary API documentation of "skyeng"
+# English/Russian Dictionary by API documentation of "skyeng"
 
 # MVVM
 # Clean
