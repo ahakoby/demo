@@ -8,29 +8,29 @@
 
 Third Parties:
 # Reactive
-  pod 'RxSwift'
-  pod 'RxCocoa'
-  pod 'RxSwiftExt'
-  pod 'RxAlamofire'
-  pod 'RxDataSources'
-  pod 'RxRestClient'
+  RxSwift |
+  RxCocoa |
+  RxSwiftExt |
+  RxAlamofire |
+  RxDataSources |
+  RxRestClient 
 
 # Network
-  pod 'Alamofire'
-  pod 'Alamofire-Synchronous'
+  Alamofire |
+  Alamofire-Synchronous 
 
 # DB
-  pod "Realm"
-  pod "RealmSwift"
-  pod "RxRealm"
+  Realm |
+  RealmSwift |
+  RxRealm 
 
 # Util
-  pod 'R.swift'
-  pod 'Swinject'
-  pod 'SwiftyUserDefaults'
-  pod 'SDWebImage'
+  R.swift |
+  Swinject |
+  SwiftyUserDefaults |
+  SDWebImage 
 
 
 # UI
-  pod 'SwiftMessages'
+  SwiftMessages
 
