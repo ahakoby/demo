@@ -1,0 +1,51 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+def required_pods
+
+  # Reactive
+  pod 'RxSwift'
+  pod 'RxCocoa'
+  pod 'RxSwiftExt'
+  pod 'RxAlamofire'
+  pod 'RxDataSources'
+  pod 'RxRestClient'
+
+  # Network
+  pod 'Alamofire'
+  pod 'Alamofire-Synchronous'
+
+  # DB
+  pod "Realm"
+  pod "RealmSwift"
+  pod "RxRealm"
+
+  # Util
+  pod 'R.swift'
+  pod 'Swinject'
+  pod 'SwiftyUserDefaults'
+  pod 'SDWebImage'
+
+
+  # UI
+  pod 'SwiftMessages'
+
+end
+
+target 'skyeng-External' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for skyeng-External
+  required_pods
+
+  target 'skyeng-ExternalTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'skyeng-ExternalUITests' do
+    # Pods for testing
+  end
+
+end
