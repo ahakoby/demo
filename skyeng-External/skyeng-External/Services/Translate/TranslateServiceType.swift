@@ -112,8 +112,7 @@ final class TranslateOfflineService: TranslateOfflineServiceType {
     }
     
     @discardableResult func save(_ words: Words) -> Observable<Void>? {
-        return self.repository.save(entity: words).subscribe { _ in
-        }  as? Observable<Void>
+        return self.repository.save(entity: words)
     }
     
 }

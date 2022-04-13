@@ -54,16 +54,28 @@ final class Repository: RepositoryType {
     
     func save<T>(entity: T) -> Observable<Void>
     where T : RealmRepresentable, T == T.RealmType.DomainType, T.RealmType : RealmSwiftObject {
-        return Observable.deferred {
+        let connectableObserver = Observable.deferred {
             return self.realm.rx.save(entity: entity)
-        }.subscribeOn(scheduler)
+        }
+        .subscribeOn(scheduler)
+        .publish()
+        
+        _ = connectableObserver.connect()
+        
+        return connectableObserver        
     }
     
     func delete<T>(entity: T) -> Observable<Void>
     where T : RealmRepresentable, T == T.RealmType.DomainType, T.RealmType : RealmSwiftObject {
-        return Observable.deferred {
+        let connectableObserver = Observable.deferred {
             return self.realm.rx.delete(entity: entity)
-        }.subscribeOn(scheduler)
+        }
+        .subscribeOn(scheduler)
+        .publish()
+        
+        _ = connectableObserver.connect()
+        
+        return connectableObserver
     }
     
 
