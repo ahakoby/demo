@@ -31,11 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppEnvironment.setup()
         AppEnvironment.log()
         configureLunchScenePoint()
-                
-//        if let vc = self.appCoordinator.root?.topMostViewController() {
-//            _ = vc.view.traitCollection.userInterfaceStyle.scheme
-//        }
-        
+                        
         return true
     }
 

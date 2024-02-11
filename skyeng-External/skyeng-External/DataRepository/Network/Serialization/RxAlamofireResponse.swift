@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 import Alamofire
-import RxSwiftExt
+//import RxSwiftExt
 
 extension DataRequest {
     func responseSingle<T: DecodableModel>(_ type: T.Type = T.self, queue: DispatchQueue? = nil, keyPath: String? = nil) -> Single<T>  {

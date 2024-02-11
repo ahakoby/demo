@@ -7,9 +7,9 @@
 
 import Foundation
 
-typealias RLocalized = R.string.localizable
-typealias RImage = R.image
-typealias RNib = R.nib
+//typealias RLocalized = R.string.localizable
+//typealias RImage = R.image
+//typealias RNib = R.nib
 
 enum TimingConstant {
     static let bannerDuration = 3.0

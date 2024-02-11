@@ -68,7 +68,7 @@ class ResultViewController: BaseViewController {
     }
     
     override func bindTexts() {
-        self.title = RLocalized.title_skyeng()
+        self.title = R.string.localizable.title_skyeng()
         BaseStyles.defaultBackgroundView.apply(to: tableView)
         let textFileld = searchController.searchBar.value(forKey: "searchField") as? UITextField
         textFileld?.textColor = .defaultTextColor
@@ -87,7 +87,7 @@ class ResultViewController: BaseViewController {
         // RXTableView
         let configureTableCell: RxTableViewSectionedReloadDataSource<TranslationSection>
             .ConfigureCell = { dataSource, tableView, index, model in
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: RNib.tableViewCell, for: index)  else {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: R.nib.tableViewCell, for: index)  else {
                     return TableViewCell()
 
                 }
@@ -122,7 +122,7 @@ class ResultViewController: BaseViewController {
 
     // MARK: - Helpers
     private func configureTableView() {
-        tableView.register(RNib.tableViewCell)
+        tableView.register(R.nib.tableViewCell)
         tableView.rowHeight = UITableView.automaticDimension
     }
 

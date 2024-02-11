@@ -10,7 +10,7 @@ import Alamofire
 import RxSwift
 import Realm
 import RealmSwift
-import RxRealm
+//import RxRealm
 
 final class Repository: RepositoryType {
 

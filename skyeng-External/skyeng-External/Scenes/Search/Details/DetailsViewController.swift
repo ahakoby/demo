@@ -47,7 +47,7 @@ class DetailsViewController: BaseViewController {
     }
     
     override func bindTexts() {
-        self.title = RLocalized.title_meaning()
+        self.title = R.string.localizable.title_meaning()
         BaseStyles.defaultBackgroundView.apply(to: tableView)
     }
     

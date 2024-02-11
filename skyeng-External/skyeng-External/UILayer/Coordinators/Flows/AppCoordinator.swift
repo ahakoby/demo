@@ -26,7 +26,7 @@ final class AppCoordinator: CoordinatorType, CoordinatorDelegate {
         }
     }
     
-    @discardableResult
+    @MainActor @discardableResult
     func execute(step: CoordinatorStepType) -> Bool {
         guard let appStep = step as? AppStep else {
             return self.cascade(step: step)
@@ -62,7 +62,7 @@ final class AppCoordinator: CoordinatorType, CoordinatorDelegate {
     }
     
     // #dev Handle localization with R.swift. A.H.
-    fileprivate func presentError(error: Error) {
+    @MainActor fileprivate func presentError(error: Error) {
         configureBanner(with: error.localizedDescription, color: .red)
     }
     
@@ -91,7 +91,7 @@ final class AppCoordinator: CoordinatorType, CoordinatorDelegate {
         indicator.removeFromSuperview()
     }
 
-    fileprivate func configureBanner(with text: String = "Thanks You", color: UIColor = .defaultTextColor) {
+    @MainActor fileprivate func configureBanner(with text: String = "Thanks You", color: UIColor = .defaultTextColor) {
         // Setup view
         let view: MessageView = try! SwiftMessages.viewFromNib()
         

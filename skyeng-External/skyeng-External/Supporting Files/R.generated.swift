@@ -4,500 +4,288 @@
 //
 
 import Foundation
-import Rswift
+import RswiftResources
 import UIKit
 
-/// This `R` struct is generated and contains references to static resources.
-struct R: Rswift.Validatable {
-  fileprivate static let applicationLocale = hostingBundle.preferredLocalizations.first.flatMap { Locale(identifier: $0) } ?? Locale.current
-  fileprivate static let hostingBundle = Bundle(for: R.Class.self)
+private class BundleFinder {}
+let R = _R(bundle: Bundle(for: BundleFinder.self))
 
-  /// Find first language and bundle for which the table exists
-  fileprivate static func localeBundle(tableName: String, preferredLanguages: [String]) -> (Foundation.Locale, Foundation.Bundle)? {
-    // Filter preferredLanguages to localizations, use first locale
-    var languages = preferredLanguages
-      .map { Locale(identifier: $0) }
-      .prefix(1)
-      .flatMap { locale -> [String] in
-        if hostingBundle.localizations.contains(locale.identifier) {
-          if let language = locale.languageCode, hostingBundle.localizations.contains(language) {
-            return [locale.identifier, language]
-          } else {
-            return [locale.identifier]
-          }
-        } else if let language = locale.languageCode, hostingBundle.localizations.contains(language) {
-          return [language]
-        } else {
-          return []
-        }
-      }
+struct _R {
+  let bundle: Foundation.Bundle
 
-    // If there's no languages, use development language as backstop
-    if languages.isEmpty {
-      if let developmentLocalization = hostingBundle.developmentLocalization {
-        languages = [developmentLocalization]
-      }
-    } else {
-      // Insert Base as second item (between locale identifier and languageCode)
-      languages.insert("Base", at: 1)
+  let reuseIdentifier = reuseIdentifier()
 
-      // Add development language as backstop
-      if let developmentLocalization = hostingBundle.developmentLocalization {
-        languages.append(developmentLocalization)
-      }
-    }
+  var string: string { .init(bundle: bundle, preferredLanguages: nil, locale: nil) }
+  var color: color { .init(bundle: bundle) }
+  var image: image { .init(bundle: bundle) }
+  var nib: nib { .init(bundle: bundle) }
+  var storyboard: storyboard { .init(bundle: bundle) }
 
-    // Find first language for which table exists
-    // Note: key might not exist in chosen language (in that case, key will be shown)
-    for language in languages {
-      if let lproj = hostingBundle.url(forResource: language, withExtension: "lproj"),
-         let lbundle = Bundle(url: lproj)
-      {
-        let strings = lbundle.url(forResource: tableName, withExtension: "strings")
-        let stringsdict = lbundle.url(forResource: tableName, withExtension: "stringsdict")
-
-        if strings != nil || stringsdict != nil {
-          return (Locale(identifier: language), lbundle)
-        }
-      }
-    }
-
-    // If table is available in main bundle, don't look for localized resources
-    let strings = hostingBundle.url(forResource: tableName, withExtension: "strings", subdirectory: nil, localization: nil)
-    let stringsdict = hostingBundle.url(forResource: tableName, withExtension: "stringsdict", subdirectory: nil, localization: nil)
-
-    if strings != nil || stringsdict != nil {
-      return (applicationLocale, hostingBundle)
-    }
-
-    // If table is not found for requested languages, key will be shown
-    return nil
+  func string(bundle: Foundation.Bundle) -> string {
+    .init(bundle: bundle, preferredLanguages: nil, locale: nil)
+  }
+  func string(locale: Foundation.Locale) -> string {
+    .init(bundle: bundle, preferredLanguages: nil, locale: locale)
+  }
+  func string(preferredLanguages: [String], locale: Locale? = nil) -> string {
+    .init(bundle: bundle, preferredLanguages: preferredLanguages, locale: locale)
+  }
+  func color(bundle: Foundation.Bundle) -> color {
+    .init(bundle: bundle)
+  }
+  func image(bundle: Foundation.Bundle) -> image {
+    .init(bundle: bundle)
+  }
+  func nib(bundle: Foundation.Bundle) -> nib {
+    .init(bundle: bundle)
+  }
+  func storyboard(bundle: Foundation.Bundle) -> storyboard {
+    .init(bundle: bundle)
+  }
+  func validate() throws {
+    try self.nib.validate()
+    try self.storyboard.validate()
   }
 
-  /// Load string from Info.plist file
-  fileprivate static func infoPlistString(path: [String], key: String) -> String? {
-    var dict = hostingBundle.infoDictionary
-    for step in path {
-      guard let obj = dict?[step] as? [String: Any] else { return nil }
-      dict = obj
-    }
-    return dict?[key] as? String
+  struct project {
+    let developmentRegion = "en"
   }
 
-  static func validate() throws {
-    try intern.validate()
-  }
-
-  #if os(iOS) || os(tvOS)
-  /// This `R.storyboard` struct is generated, and contains static references to 3 storyboards.
-  struct storyboard {
-    /// Storyboard `LaunchScreen`.
-    static let launchScreen = _R.storyboard.launchScreen()
-    /// Storyboard `Loading`.
-    static let loading = _R.storyboard.loading()
-    /// Storyboard `Search`.
-    static let search = _R.storyboard.search()
-
-    #if os(iOS) || os(tvOS)
-    /// `UIStoryboard(name: "LaunchScreen", bundle: ...)`
-    static func launchScreen(_: Void = ()) -> UIKit.UIStoryboard {
-      return UIKit.UIStoryboard(resource: R.storyboard.launchScreen)
-    }
-    #endif
-
-    #if os(iOS) || os(tvOS)
-    /// `UIStoryboard(name: "Loading", bundle: ...)`
-    static func loading(_: Void = ()) -> UIKit.UIStoryboard {
-      return UIKit.UIStoryboard(resource: R.storyboard.loading)
-    }
-    #endif
-
-    #if os(iOS) || os(tvOS)
-    /// `UIStoryboard(name: "Search", bundle: ...)`
-    static func search(_: Void = ()) -> UIKit.UIStoryboard {
-      return UIKit.UIStoryboard(resource: R.storyboard.search)
-    }
-    #endif
-
-    fileprivate init() {}
-  }
-  #endif
-
-  /// This `R.color` struct is generated, and contains static references to 1 colors.
-  struct color {
-    /// Color `AccentColor`.
-    static let accentColor = Rswift.ColorResource(bundle: R.hostingBundle, name: "AccentColor")
-
-    #if os(iOS) || os(tvOS)
-    /// `UIColor(named: "AccentColor", bundle: ..., traitCollection: ...)`
-    @available(tvOS 11.0, *)
-    @available(iOS 11.0, *)
-    static func accentColor(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIColor? {
-      return UIKit.UIColor(resource: R.color.accentColor, compatibleWith: traitCollection)
-    }
-    #endif
-
-    #if os(watchOS)
-    /// `UIColor(named: "AccentColor", bundle: ..., traitCollection: ...)`
-    @available(watchOSApplicationExtension 4.0, *)
-    static func accentColor(_: Void = ()) -> UIKit.UIColor? {
-      return UIKit.UIColor(named: R.color.accentColor.name)
-    }
-    #endif
-
-    /// This `R.color.dark` struct is generated, and contains static references to 0 colors.
-    struct dark {
-      /// This `R.color.dark.colors` struct is generated, and contains static references to 2 colors.
-      struct colors {
-        /// Color `BG`.
-        static let bG = Rswift.ColorResource(bundle: R.hostingBundle, name: "dark/colors/BG")
-        /// Color `Text`.
-        static let text = Rswift.ColorResource(bundle: R.hostingBundle, name: "dark/colors/Text")
-
-        #if os(iOS) || os(tvOS)
-        /// `UIColor(named: "BG", bundle: ..., traitCollection: ...)`
-        @available(tvOS 11.0, *)
-        @available(iOS 11.0, *)
-        static func bG(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIColor? {
-          return UIKit.UIColor(resource: R.color.dark.colors.bG, compatibleWith: traitCollection)
-        }
-        #endif
-
-        #if os(iOS) || os(tvOS)
-        /// `UIColor(named: "Text", bundle: ..., traitCollection: ...)`
-        @available(tvOS 11.0, *)
-        @available(iOS 11.0, *)
-        static func text(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIColor? {
-          return UIKit.UIColor(resource: R.color.dark.colors.text, compatibleWith: traitCollection)
-        }
-        #endif
-
-        #if os(watchOS)
-        /// `UIColor(named: "BG", bundle: ..., traitCollection: ...)`
-        @available(watchOSApplicationExtension 4.0, *)
-        static func bG(_: Void = ()) -> UIKit.UIColor? {
-          return UIKit.UIColor(named: R.color.dark.colors.bG.name)
-        }
-        #endif
-
-        #if os(watchOS)
-        /// `UIColor(named: "Text", bundle: ..., traitCollection: ...)`
-        @available(watchOSApplicationExtension 4.0, *)
-        static func text(_: Void = ()) -> UIKit.UIColor? {
-          return UIKit.UIColor(named: R.color.dark.colors.text.name)
-        }
-        #endif
-
-        fileprivate init() {}
-      }
-
-      fileprivate init() {}
-    }
-
-    /// This `R.color.light` struct is generated, and contains static references to 0 colors.
-    struct light {
-      /// This `R.color.light.colors` struct is generated, and contains static references to 2 colors.
-      struct colors {
-        /// Color `BG`.
-        static let bG = Rswift.ColorResource(bundle: R.hostingBundle, name: "light/colors/BG")
-        /// Color `Text`.
-        static let text = Rswift.ColorResource(bundle: R.hostingBundle, name: "light/colors/Text")
-
-        #if os(iOS) || os(tvOS)
-        /// `UIColor(named: "BG", bundle: ..., traitCollection: ...)`
-        @available(tvOS 11.0, *)
-        @available(iOS 11.0, *)
-        static func bG(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIColor? {
-          return UIKit.UIColor(resource: R.color.light.colors.bG, compatibleWith: traitCollection)
-        }
-        #endif
-
-        #if os(iOS) || os(tvOS)
-        /// `UIColor(named: "Text", bundle: ..., traitCollection: ...)`
-        @available(tvOS 11.0, *)
-        @available(iOS 11.0, *)
-        static func text(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIColor? {
-          return UIKit.UIColor(resource: R.color.light.colors.text, compatibleWith: traitCollection)
-        }
-        #endif
-
-        #if os(watchOS)
-        /// `UIColor(named: "BG", bundle: ..., traitCollection: ...)`
-        @available(watchOSApplicationExtension 4.0, *)
-        static func bG(_: Void = ()) -> UIKit.UIColor? {
-          return UIKit.UIColor(named: R.color.light.colors.bG.name)
-        }
-        #endif
-
-        #if os(watchOS)
-        /// `UIColor(named: "Text", bundle: ..., traitCollection: ...)`
-        @available(watchOSApplicationExtension 4.0, *)
-        static func text(_: Void = ()) -> UIKit.UIColor? {
-          return UIKit.UIColor(named: R.color.light.colors.text.name)
-        }
-        #endif
-
-        fileprivate init() {}
-      }
-
-      fileprivate init() {}
-    }
-
-    fileprivate init() {}
-  }
-
-  /// This `R.image` struct is generated, and contains static references to 0 images.
-  struct image {
-    /// This `R.image.dark` struct is generated, and contains static references to 0 images.
-    struct dark {
-      /// This `R.image.dark.images` struct is generated, and contains static references to 1 images.
-      struct images {
-        /// Image `SkyengNew`.
-        static let skyengNew = Rswift.ImageResource(bundle: R.hostingBundle, name: "dark/images/SkyengNew")
-
-        #if os(iOS) || os(tvOS)
-        /// `UIImage(named: "SkyengNew", bundle: ..., traitCollection: ...)`
-        static func skyengNew(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
-          return UIKit.UIImage(resource: R.image.dark.images.skyengNew, compatibleWith: traitCollection)
-        }
-        #endif
-
-        fileprivate init() {}
-      }
-
-      fileprivate init() {}
-    }
-
-    /// This `R.image.light` struct is generated, and contains static references to 0 images.
-    struct light {
-      /// This `R.image.light.images` struct is generated, and contains static references to 1 images.
-      struct images {
-        /// Image `SkyengNew`.
-        static let skyengNew = Rswift.ImageResource(bundle: R.hostingBundle, name: "light/images/SkyengNew")
-
-        #if os(iOS) || os(tvOS)
-        /// `UIImage(named: "SkyengNew", bundle: ..., traitCollection: ...)`
-        static func skyengNew(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
-          return UIKit.UIImage(resource: R.image.light.images.skyengNew, compatibleWith: traitCollection)
-        }
-        #endif
-
-        fileprivate init() {}
-      }
-
-      fileprivate init() {}
-    }
-
-    fileprivate init() {}
-  }
-
-  /// This `R.nib` struct is generated, and contains static references to 1 nibs.
-  struct nib {
-    /// Nib `TableViewCell`.
-    static let tableViewCell = _R.nib._TableViewCell()
-
-    #if os(iOS) || os(tvOS)
-    /// `UINib(name: "TableViewCell", in: bundle)`
-    @available(*, deprecated, message: "Use UINib(resource: R.nib.tableViewCell) instead")
-    static func tableViewCell(_: Void = ()) -> UIKit.UINib {
-      return UIKit.UINib(resource: R.nib.tableViewCell)
-    }
-    #endif
-
-    static func tableViewCell(owner ownerOrNil: AnyObject?, options optionsOrNil: [UINib.OptionsKey : Any]? = nil) -> TableViewCell? {
-      return R.nib.tableViewCell.instantiate(withOwner: ownerOrNil, options: optionsOrNil)[0] as? TableViewCell
-    }
-
-    fileprivate init() {}
-  }
-
-  /// This `R.reuseIdentifier` struct is generated, and contains static references to 3 reuse identifiers.
-  struct reuseIdentifier {
-    /// Reuse identifier `MeaningCell`.
-    static let meaningCell: Rswift.ReuseIdentifier<MeaningTableViewCell> = Rswift.ReuseIdentifier(identifier: "MeaningCell")
-    /// Reuse identifier `TitleTableViewCell`.
-    static let titleTableViewCell: Rswift.ReuseIdentifier<TitleTableViewCell> = Rswift.ReuseIdentifier(identifier: "TitleTableViewCell")
-    /// Reuse identifier `tableViewCell`.
-    static let tableViewCell: Rswift.ReuseIdentifier<TableViewCell> = Rswift.ReuseIdentifier(identifier: "tableViewCell")
-
-    fileprivate init() {}
-  }
-
-  /// This `R.string` struct is generated, and contains static references to 1 localization tables.
+  /// This `_R.string` struct is generated, and contains static references to 1 localization tables.
   struct string {
-    /// This `R.string.localizable` struct is generated, and contains static references to 2 localization keys.
+    let bundle: Foundation.Bundle
+    let preferredLanguages: [String]?
+    let locale: Locale?
+    var localizable: localizable { .init(source: .init(bundle: bundle, tableName: "Localizable", preferredLanguages: preferredLanguages, locale: locale)) }
+
+    func localizable(preferredLanguages: [String]) -> localizable {
+      .init(source: .init(bundle: bundle, tableName: "Localizable", preferredLanguages: preferredLanguages, locale: locale))
+    }
+
+
+    /// This `_R.string.localizable` struct is generated, and contains static references to 2 localization keys.
     struct localizable {
-      /// en translation: Meanings
-      ///
-      /// Locales: en, ru
-      static let title_meaning = Rswift.StringResource(key: "title_meaning", tableName: "Localizable", bundle: R.hostingBundle, locales: ["en", "ru"], comment: nil)
-      /// en translation: skyeng
-      ///
-      /// Locales: en, ru
-      static let title_skyeng = Rswift.StringResource(key: "title_skyeng", tableName: "Localizable", bundle: R.hostingBundle, locales: ["en", "ru"], comment: nil)
+      let source: RswiftResources.StringResource.Source
 
       /// en translation: Meanings
       ///
+      /// Key: title_meaning
+      ///
       /// Locales: en, ru
-      static func title_meaning(preferredLanguages: [String]? = nil) -> String {
-        guard let preferredLanguages = preferredLanguages else {
-          return NSLocalizedString("title_meaning", bundle: hostingBundle, comment: "")
-        }
-
-        guard let (_, bundle) = localeBundle(tableName: "Localizable", preferredLanguages: preferredLanguages) else {
-          return "title_meaning"
-        }
-
-        return NSLocalizedString("title_meaning", bundle: bundle, comment: "")
-      }
+      var title_meaning: RswiftResources.StringResource { .init(key: "title_meaning", tableName: "Localizable", source: source, developmentValue: "Meanings", comment: nil) }
 
       /// en translation: skyeng
       ///
+      /// Key: title_skyeng
+      ///
       /// Locales: en, ru
-      static func title_skyeng(preferredLanguages: [String]? = nil) -> String {
-        guard let preferredLanguages = preferredLanguages else {
-          return NSLocalizedString("title_skyeng", bundle: hostingBundle, comment: "")
-        }
+      var title_skyeng: RswiftResources.StringResource { .init(key: "title_skyeng", tableName: "Localizable", source: source, developmentValue: "skyeng", comment: nil) }
+    }
+  }
 
-        guard let (_, bundle) = localeBundle(tableName: "Localizable", preferredLanguages: preferredLanguages) else {
-          return "title_skyeng"
-        }
+  /// This `_R.color` struct is generated, and contains static references to 1 colors, and 2 namespaces.
+  struct color {
+    let bundle: Foundation.Bundle
 
-        return NSLocalizedString("title_skyeng", bundle: bundle, comment: "")
+    /// Color `AccentColor`.
+    var accentColor: RswiftResources.ColorResource { .init(name: "AccentColor", path: [], bundle: bundle) }
+    var dark: dark { .init(bundle: bundle) }
+    var light: light { .init(bundle: bundle) }
+
+    func dark(bundle: Foundation.Bundle) -> dark {
+      .init(bundle: bundle)
+    }
+    func light(bundle: Foundation.Bundle) -> light {
+      .init(bundle: bundle)
+    }
+
+
+    /// This `_R.color.dark` struct is generated, and contains static references to 0 darks, and 1 namespaces.
+    struct dark {
+      let bundle: Foundation.Bundle
+      var colors: colors { .init(bundle: bundle) }
+
+      func colors(bundle: Foundation.Bundle) -> colors {
+        .init(bundle: bundle)
       }
 
-      fileprivate init() {}
+
+      /// This `_R.color.dark.colors` struct is generated, and contains static references to 2 colorss.
+      struct colors {
+        let bundle: Foundation.Bundle
+
+        /// Color `dark/colors/BG`.
+        var bG: RswiftResources.ColorResource { .init(name: "dark/colors/BG", path: ["dark", "colors"], bundle: bundle) }
+
+        /// Color `dark/colors/Text`.
+        var text: RswiftResources.ColorResource { .init(name: "dark/colors/Text", path: ["dark", "colors"], bundle: bundle) }
+      }
     }
 
-    fileprivate init() {}
+    /// This `_R.color.light` struct is generated, and contains static references to 0 lights, and 1 namespaces.
+    struct light {
+      let bundle: Foundation.Bundle
+      var colors: colors { .init(bundle: bundle) }
+
+      func colors(bundle: Foundation.Bundle) -> colors {
+        .init(bundle: bundle)
+      }
+
+
+      /// This `_R.color.light.colors` struct is generated, and contains static references to 2 colorss.
+      struct colors {
+        let bundle: Foundation.Bundle
+
+        /// Color `light/colors/BG`.
+        var bG: RswiftResources.ColorResource { .init(name: "light/colors/BG", path: ["light", "colors"], bundle: bundle) }
+
+        /// Color `light/colors/Text`.
+        var text: RswiftResources.ColorResource { .init(name: "light/colors/Text", path: ["light", "colors"], bundle: bundle) }
+      }
+    }
   }
 
-  fileprivate struct intern: Rswift.Validatable {
-    fileprivate static func validate() throws {
-      try _R.validate()
+  /// This `_R.image` struct is generated, and contains static references to 0 images, and 2 namespaces.
+  struct image {
+    let bundle: Foundation.Bundle
+    var dark: dark { .init(bundle: bundle) }
+    var light: light { .init(bundle: bundle) }
+
+    func dark(bundle: Foundation.Bundle) -> dark {
+      .init(bundle: bundle)
+    }
+    func light(bundle: Foundation.Bundle) -> light {
+      .init(bundle: bundle)
     }
 
-    fileprivate init() {}
+
+    /// This `_R.image.dark` struct is generated, and contains static references to 0 darks, and 1 namespaces.
+    struct dark {
+      let bundle: Foundation.Bundle
+      var images: images { .init(bundle: bundle) }
+
+      func images(bundle: Foundation.Bundle) -> images {
+        .init(bundle: bundle)
+      }
+
+
+      /// This `_R.image.dark.images` struct is generated, and contains static references to 1 imagess.
+      struct images {
+        let bundle: Foundation.Bundle
+
+        /// Image `dark/images/SkyengNew`.
+        var skyengNew: RswiftResources.ImageResource { .init(name: "dark/images/SkyengNew", path: ["dark", "images"], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
+      }
+    }
+
+    /// This `_R.image.light` struct is generated, and contains static references to 0 lights, and 1 namespaces.
+    struct light {
+      let bundle: Foundation.Bundle
+      var images: images { .init(bundle: bundle) }
+
+      func images(bundle: Foundation.Bundle) -> images {
+        .init(bundle: bundle)
+      }
+
+
+      /// This `_R.image.light.images` struct is generated, and contains static references to 1 imagess.
+      struct images {
+        let bundle: Foundation.Bundle
+
+        /// Image `light/images/SkyengNew`.
+        var skyengNew: RswiftResources.ImageResource { .init(name: "light/images/SkyengNew", path: ["light", "images"], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
+      }
+    }
   }
 
-  fileprivate class Class {}
-
-  fileprivate init() {}
-}
-
-struct _R: Rswift.Validatable {
-  static func validate() throws {
-    #if os(iOS) || os(tvOS)
-    try storyboard.validate()
-    #endif
-  }
-
-  #if os(iOS) || os(tvOS)
+  /// This `_R.nib` struct is generated, and contains static references to 1 nibs.
   struct nib {
-    struct _TableViewCell: Rswift.NibResourceType, Rswift.ReuseIdentifierType {
-      typealias ReusableType = TableViewCell
+    let bundle: Foundation.Bundle
 
-      let bundle = R.hostingBundle
-      let identifier = "tableViewCell"
-      let name = "TableViewCell"
+    /// Nib `TableViewCell`.
+    var tableViewCell: RswiftResources.NibReferenceReuseIdentifier<TableViewCell, TableViewCell> { .init(name: "TableViewCell", bundle: bundle, identifier: "tableViewCell") }
 
-      func firstView(owner ownerOrNil: AnyObject?, options optionsOrNil: [UINib.OptionsKey : Any]? = nil) -> TableViewCell? {
-        return instantiate(withOwner: ownerOrNil, options: optionsOrNil)[0] as? TableViewCell
-      }
+    func validate() throws {
 
-      fileprivate init() {}
     }
-
-    fileprivate init() {}
   }
-  #endif
 
-  #if os(iOS) || os(tvOS)
-  struct storyboard: Rswift.Validatable {
-    static func validate() throws {
-      #if os(iOS) || os(tvOS)
-      try launchScreen.validate()
-      #endif
-      #if os(iOS) || os(tvOS)
-      try loading.validate()
-      #endif
-      #if os(iOS) || os(tvOS)
-      try search.validate()
-      #endif
+  /// This `_R.reuseIdentifier` struct is generated, and contains static references to 3 reuse identifiers.
+  struct reuseIdentifier {
+
+    /// Reuse identifier `MeaningCell`.
+    let meaningCell: RswiftResources.ReuseIdentifier<MeaningTableViewCell> = .init(identifier: "MeaningCell")
+
+    /// Reuse identifier `tableViewCell`.
+    let tableViewCell: RswiftResources.ReuseIdentifier<TableViewCell> = .init(identifier: "tableViewCell")
+
+    /// Reuse identifier `TitleTableViewCell`.
+    let titleTableViewCell: RswiftResources.ReuseIdentifier<TitleTableViewCell> = .init(identifier: "TitleTableViewCell")
+  }
+
+  /// This `_R.storyboard` struct is generated, and contains static references to 3 storyboards.
+  struct storyboard {
+    let bundle: Foundation.Bundle
+    var launchScreen: launchScreen { .init(bundle: bundle) }
+    var loading: loading { .init(bundle: bundle) }
+    var search: search { .init(bundle: bundle) }
+
+    func launchScreen(bundle: Foundation.Bundle) -> launchScreen {
+      .init(bundle: bundle)
+    }
+    func loading(bundle: Foundation.Bundle) -> loading {
+      .init(bundle: bundle)
+    }
+    func search(bundle: Foundation.Bundle) -> search {
+      .init(bundle: bundle)
+    }
+    func validate() throws {
+      try self.launchScreen.validate()
+      try self.loading.validate()
+      try self.search.validate()
     }
 
-    #if os(iOS) || os(tvOS)
-    struct launchScreen: Rswift.StoryboardResourceWithInitialControllerType, Rswift.Validatable {
+
+    /// Storyboard `LaunchScreen`.
+    struct launchScreen: RswiftResources.StoryboardReference, RswiftResources.InitialControllerContainer {
       typealias InitialController = UIKit.UIViewController
 
-      let bundle = R.hostingBundle
+      let bundle: Foundation.Bundle
+
       let name = "LaunchScreen"
-
-      static func validate() throws {
-        if UIKit.UIImage(named: "SkyengNew", in: R.hostingBundle, compatibleWith: nil) == nil { throw Rswift.ValidationError(description: "[R.swift] Image named 'SkyengNew' is used in storyboard 'LaunchScreen', but couldn't be loaded.") }
-        if #available(iOS 11.0, tvOS 11.0, *) {
-        }
+      func validate() throws {
+        if UIKit.UIImage(named: "SkyengNew", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'SkyengNew' is used in storyboard 'LaunchScreen', but couldn't be loaded.") }
       }
-
-      fileprivate init() {}
     }
-    #endif
 
-    #if os(iOS) || os(tvOS)
-    struct loading: Rswift.StoryboardResourceType, Rswift.Validatable {
-      let bundle = R.hostingBundle
-      let loadingViewController = StoryboardViewControllerResource<LoadingViewController>(identifier: "LoadingViewController")
+    /// Storyboard `Loading`.
+    struct loading: RswiftResources.StoryboardReference {
+      let bundle: Foundation.Bundle
+
       let name = "Loading"
 
-      func loadingViewController(_: Void = ()) -> LoadingViewController? {
-        return UIKit.UIStoryboard(resource: self).instantiateViewController(withResource: loadingViewController)
-      }
+      var loadingViewController: RswiftResources.StoryboardViewControllerIdentifier<LoadingViewController> { .init(identifier: "LoadingViewController", storyboard: name, bundle: bundle) }
 
-      static func validate() throws {
-        if #available(iOS 11.0, tvOS 11.0, *) {
-        }
-        if _R.storyboard.loading().loadingViewController() == nil { throw Rswift.ValidationError(description:"[R.swift] ViewController with identifier 'loadingViewController' could not be loaded from storyboard 'Loading' as 'LoadingViewController'.") }
+      func validate() throws {
+        if loadingViewController() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'loadingViewController' could not be loaded from storyboard 'Loading' as 'LoadingViewController'.") }
       }
-
-      fileprivate init() {}
     }
-    #endif
 
-    #if os(iOS) || os(tvOS)
-    struct search: Rswift.StoryboardResourceType, Rswift.Validatable {
-      let bundle = R.hostingBundle
-      let detailsViewController = StoryboardViewControllerResource<DetailsViewController>(identifier: "DetailsViewController")
+    /// Storyboard `Search`.
+    struct search: RswiftResources.StoryboardReference {
+      let bundle: Foundation.Bundle
+
       let name = "Search"
-      let resultViewController = StoryboardViewControllerResource<ResultViewController>(identifier: "ResultViewController")
-      let searchViewController = StoryboardViewControllerResource<SearchViewController>(identifier: "SearchViewController")
 
-      func detailsViewController(_: Void = ()) -> DetailsViewController? {
-        return UIKit.UIStoryboard(resource: self).instantiateViewController(withResource: detailsViewController)
+      var detailsViewController: RswiftResources.StoryboardViewControllerIdentifier<DetailsViewController> { .init(identifier: "DetailsViewController", storyboard: name, bundle: bundle) }
+      var resultViewController: RswiftResources.StoryboardViewControllerIdentifier<ResultViewController> { .init(identifier: "ResultViewController", storyboard: name, bundle: bundle) }
+      var searchViewController: RswiftResources.StoryboardViewControllerIdentifier<SearchViewController> { .init(identifier: "SearchViewController", storyboard: name, bundle: bundle) }
+
+      func validate() throws {
+        if detailsViewController() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'detailsViewController' could not be loaded from storyboard 'Search' as 'DetailsViewController'.") }
+        if resultViewController() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'resultViewController' could not be loaded from storyboard 'Search' as 'ResultViewController'.") }
+        if searchViewController() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'searchViewController' could not be loaded from storyboard 'Search' as 'SearchViewController'.") }
       }
-
-      func resultViewController(_: Void = ()) -> ResultViewController? {
-        return UIKit.UIStoryboard(resource: self).instantiateViewController(withResource: resultViewController)
-      }
-
-      func searchViewController(_: Void = ()) -> SearchViewController? {
-        return UIKit.UIStoryboard(resource: self).instantiateViewController(withResource: searchViewController)
-      }
-
-      static func validate() throws {
-        if #available(iOS 11.0, tvOS 11.0, *) {
-        }
-        if _R.storyboard.search().detailsViewController() == nil { throw Rswift.ValidationError(description:"[R.swift] ViewController with identifier 'detailsViewController' could not be loaded from storyboard 'Search' as 'DetailsViewController'.") }
-        if _R.storyboard.search().resultViewController() == nil { throw Rswift.ValidationError(description:"[R.swift] ViewController with identifier 'resultViewController' could not be loaded from storyboard 'Search' as 'ResultViewController'.") }
-        if _R.storyboard.search().searchViewController() == nil { throw Rswift.ValidationError(description:"[R.swift] ViewController with identifier 'searchViewController' could not be loaded from storyboard 'Search' as 'SearchViewController'.") }
-      }
-
-      fileprivate init() {}
     }
-    #endif
-
-    fileprivate init() {}
   }
-  #endif
-
-  fileprivate init() {}
 }
